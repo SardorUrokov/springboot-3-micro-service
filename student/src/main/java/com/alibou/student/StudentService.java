@@ -1,10 +1,9 @@
 package com.alibou.student;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class StudentService {
@@ -20,6 +19,6 @@ public class StudentService {
     }
 
     public List<Student> findAllStudentsBySchool(Integer schoolId) {
-        return repository.findAllBySchoolId(schoolId);
+        return repository.findAllBySchoolIdOrderBySchoolId(schoolId);
     }
 }
