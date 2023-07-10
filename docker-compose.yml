@@ -34,12 +34,12 @@ services:
 #      - "9411:9411"
 #    networks:
 #      - zipkin
-
-networks:
-  postgres:
-    driver: bridge
-  zipkin:
-    driver: bridge
+#
+#networks:
+#  postgres:
+#    driver: bridge
+#  zipkin:
+#    driver: bridge
 
 volumes:
   postgres:
