@@ -18,9 +18,7 @@ public class StudentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(
-            @RequestBody Student student
-    ) {
+    public void save(@RequestBody Student student) {
         service.saveStudent(student);
     }
 
