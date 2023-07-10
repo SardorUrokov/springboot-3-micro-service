@@ -1,5 +1,6 @@
-package com.alibou.student;
+package com.alibou.repository;
 
+import com.alibou.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

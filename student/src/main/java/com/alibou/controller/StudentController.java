@@ -1,5 +1,7 @@
-package com.alibou.student;
+package com.alibou.controller;
 
+import com.alibou.entity.Student;
+import com.alibou.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,9 @@
-package com.alibou.student;
+package com.alibou.service;
 
 import java.util.List;
 
+import com.alibou.entity.Student;
+import com.alibou.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 @Service
