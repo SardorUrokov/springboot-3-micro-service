@@ -1,10 +1,10 @@
 package com.alibou.service;
 
-import com.alibou.entity.Token;
 import com.alibou.entity.User;
+import com.alibou.entity.Token;
 import com.alibou.repository.UserRepository;
-import com.alibou.exception.ResourceNotFoundException;
 import com.alibou.repository.TokenRepository;
+import com.alibou.exception.ResourceNotFoundException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -45,8 +45,9 @@ public class AuthService {
         return generateToken;
     }
 
-    public void validateToken(String token) {
+    public String validateToken(String token) {
         jwtService.validateToken(token);
+        return jwtService.extractUsername(token);
     }
 
     public void saveToken(String username, String generatedToken) {

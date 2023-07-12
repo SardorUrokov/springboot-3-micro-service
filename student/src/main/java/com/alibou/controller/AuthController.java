@@ -18,31 +18,43 @@ public class AuthController {
     private final AuthService service;
     private final AuthenticationManager authenticationManager;
 
+    public record AuthResponse(String username, String token) {
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> addNewUser(@RequestBody User user) {
-        final var result = service.saveUser(user);
 
-        return result.endsWith("!") ?
-                ResponseEntity.status(409).body(result)
-                :
-                ResponseEntity.status(201).body(result);
+        final var result = service.saveUser(user);
+        if (result.endsWith("!"))
+            return ResponseEntity.status(409).body(result);
+
+        AuthResponse authResponse = new AuthResponse(user.getEmail(), result);
+        return ResponseEntity.status(201).body(authResponse);
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> getToken(@RequestBody AuthRequest authRequest) {
 
         Authentication authenticate = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+                .authenticate(
+                        new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+                );
 
-        if (authenticate.isAuthenticated())
-            return ResponseEntity.status(200).body(service.generateToken(authRequest.getUsername()));
-        else
+        if (authenticate.isAuthenticated()) {
+
+            final var generatedToken = service.generateToken(authRequest.getUsername());
+            AuthResponse authResponse = new AuthResponse(authRequest.getUsername(), generatedToken);
+            return ResponseEntity.status(200).body(authResponse);
+
+        } else
             throw new RuntimeException("invalid access");
     }
 
     @GetMapping("/validate")
-    public String validateToken(@RequestParam("token") String token) {
-        service.validateToken(token);
-        return "Token is valid";
+    public ResponseEntity<?> validateToken(@RequestParam("token") String token) {
+
+        final var username = service.validateToken(token);
+        AuthResponse authResponse = new AuthResponse(username, "Token is valid!");
+        return ResponseEntity.status(200).body(authResponse);
     }
 }
