@@ -6,8 +6,7 @@ server:
 spring:
   application:
     name: gateway
-  zipkin:
-    baseUrl: http://127.0.0.1:9411/
+
   cloud:
     gateway:
       discovery:

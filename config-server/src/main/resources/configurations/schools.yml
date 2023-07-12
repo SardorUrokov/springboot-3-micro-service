@@ -13,6 +13,9 @@ server:
 spring:
   application:
     name: schools
+  zipkin:
+      baseUrl: http://127.0.0.1:9411/
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/schools

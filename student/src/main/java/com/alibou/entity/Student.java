@@ -1,23 +1,24 @@
 package com.alibou.entity;
 
+import lombok.*;
+import jakarta.persistence.Id;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.*;
+import lombok.experimental.FieldDefaults;
 
+@Data
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Student {
 
     @Id
     @GeneratedValue
-    private Integer id;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private Integer schoolId;
+    Integer id;
+    String firstname;
+    String lastname;
+    String email;
+    Integer schoolId;
 }
