@@ -18,6 +18,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/schools
     username: postgres
     password: root123
+    initialization-mode: always
   jpa:
     hibernate:
       ddl-auto: create
