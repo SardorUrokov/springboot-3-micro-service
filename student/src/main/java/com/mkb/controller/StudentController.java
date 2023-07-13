@@ -7,6 +7,7 @@ import com.mkb.entity.Student;
 import com.mkb.service.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,10 +28,9 @@ public class StudentController {
         return ResponseEntity.ok(service.findAllStudents());
     }
 
+    @PreAuthorize(value = "hasAnyAuthority('ADMIN')")
     @GetMapping("/school/{school-id}")
-    public ResponseEntity<List<Student>> findAllStudents(
-            @PathVariable("school-id") Integer schoolId
-    ) {
+    public ResponseEntity<List<Student>> findAllStudents(@PathVariable("school-id") Integer schoolId) {
         return ResponseEntity.ok(service.findAllStudentsBySchool(schoolId));
     }
 }

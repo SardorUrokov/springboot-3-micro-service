@@ -3,6 +3,7 @@ package com.mkb.school;
 import com.mkb.school.client.StudentClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -22,11 +23,13 @@ public class SchoolService {
     }
 
     public FullSchoolResponse findSchoolsWithStudents(Integer schoolId) {
+
         var school = repository.findById(schoolId)
                 .orElse(School.builder()
                         .name("NOT_FOUND")
                         .email("NOT_FOUND")
-                        .build());
+                        .build()
+                );
 
         var students = client.findAllStudentsBySchool(schoolId);
         return FullSchoolResponse.builder()
