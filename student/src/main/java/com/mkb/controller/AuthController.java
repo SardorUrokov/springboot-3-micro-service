@@ -1,5 +1,6 @@
 package com.mkb.controller;
 
+import com.mkb.dto.AuthResponseDTO;
 import com.mkb.entity.User;
 import com.mkb.dto.AuthRequest;
 import com.mkb.service.AuthService;
@@ -25,10 +26,16 @@ public class AuthController {
     public ResponseEntity<?> addNewUser(@RequestBody User user) {
 
         final var result = service.saveUser(user);
-        if (result.endsWith("!"))
+        if (result.endsWith("!")) {
             return ResponseEntity.status(409).body(result);
+        }
 
-        AuthResponse authResponse = new AuthResponse(user.getEmail(), result);
+        final var authResponse = AuthResponseDTO.builder()
+                .username(user.getEmail())
+                .token(result)
+                .role("USER")
+                .build();
+
         return ResponseEntity.status(201).body(authResponse);
     }
 
@@ -43,9 +50,12 @@ public class AuthController {
         if (authenticate.isAuthenticated()) {
 
             final var generatedToken = service.generateToken(authRequest.getUsername());
-            AuthResponse authResponse = new AuthResponse(authRequest.getUsername(), generatedToken);
+            final var authResponse = AuthResponseDTO.builder()
+                    .username(authRequest.username)
+                    .token(generatedToken)
+                    .role("USER")
+                    .build();
             return ResponseEntity.status(200).body(authResponse);
-
         } else
             throw new RuntimeException("invalid access");
     }

@@ -16,12 +16,24 @@ spring:
         - id: students
           uri: http://localhost:8090
           predicates:
-            - Path=/api/v1/students/**
+            - Path=/api/v1/student/**
             - Path=/auth/*
         - id: schools
           uri: http://localhost:8070
           predicates:
             - Path=/api/v1/schools/**
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/schools
+    username: postgres
+    password: root123
+    initialization-mode: always
+  jpa:
+    hibernate:
+      ddl-auto: create
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 management:
   tracing:

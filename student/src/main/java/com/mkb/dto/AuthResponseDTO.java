@@ -3,12 +3,14 @@ package com.mkb.dto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+@Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthResponse {
+public class AuthResponseDTO {
+
     String token;
     String username;
-//    Role role;
+    String role;
 }

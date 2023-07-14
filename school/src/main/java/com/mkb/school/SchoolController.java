@@ -1,5 +1,6 @@
 package com.mkb.school;
 
+import com.mkb.school.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,11 @@ public class SchoolController {
     }
 
     @GetMapping
-    public ResponseEntity<List<School>> findAllSchools() {
-        return ResponseEntity.ok(service.findAllSchools());
+    public ResponseEntity<?> findAllSchools() {
+        final var response = service.findAllSchools();
+        return ResponseEntity
+                .status(response.getHttpStatus())
+                .body(response);
     }
 
     @GetMapping("/with-students/{school-id}")
