@@ -5,12 +5,14 @@ import com.mkb.entity.User;
 import com.mkb.dto.AuthRequest;
 import com.mkb.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -36,6 +38,8 @@ public class AuthController {
                 .role("USER")
                 .build();
 
+        log.info("User is Saved! -> {}", authResponse);
+
         return ResponseEntity.status(201).body(authResponse);
     }
 
@@ -55,6 +59,9 @@ public class AuthController {
                     .token(generatedToken)
                     .role("USER")
                     .build();
+
+            log.info("User is Authenticated! -> {}", authResponse);
+
             return ResponseEntity.status(200).body(authResponse);
         } else
             throw new RuntimeException("invalid access");

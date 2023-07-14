@@ -17,8 +17,8 @@ public class SchoolService {
     private final SchoolRepository repository;
     private final StudentClient client;
 
-    public void saveSchool(School school) {
-        repository.save(school);
+    public School saveSchool(School school) {
+        return repository.save(school);
     }
 
     public ApiResponse findAllSchools() {

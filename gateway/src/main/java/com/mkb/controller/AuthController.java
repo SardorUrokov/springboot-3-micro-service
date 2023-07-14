@@ -19,7 +19,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register (@RequestBody User user){
-
         final var response = restService.register(user);
         return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
     }
