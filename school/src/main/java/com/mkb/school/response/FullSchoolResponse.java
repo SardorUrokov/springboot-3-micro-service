@@ -1,5 +1,6 @@
-package com.mkb.school;
+package com.mkb.school.response;
 
+import com.mkb.school.entity.Student;
 import lombok.*;
 
 import java.util.List;

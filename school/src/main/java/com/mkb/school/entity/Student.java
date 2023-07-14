@@ -1,4 +1,4 @@
-package com.mkb.school;
+package com.mkb.school.entity;
 
 import lombok.*;
 

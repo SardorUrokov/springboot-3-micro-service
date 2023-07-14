@@ -1,14 +1,14 @@
-package com.mkb.school;
+package com.mkb.school.service;
 
-import com.mkb.school.client.StudentClient;
+import com.mkb.school.response.FullSchoolResponse;
+import com.mkb.school.repository.SchoolRepository;
+import com.mkb.school.feighnClient.StudentClient;
+import com.mkb.school.entity.School;
 import com.mkb.school.response.ApiResponse;
 import com.mkb.school.response.ResponseObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -48,4 +48,5 @@ public class SchoolService {
                 .students(students)
                 .build();
     }
+
 }

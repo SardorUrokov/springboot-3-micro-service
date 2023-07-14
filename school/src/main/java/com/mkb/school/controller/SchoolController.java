@@ -1,12 +1,12 @@
-package com.mkb.school;
+package com.mkb.school.controller;
 
-import com.mkb.school.response.ApiResponse;
+import com.mkb.school.entity.School;
+import com.mkb.school.response.FullSchoolResponse;
+import com.mkb.school.service.SchoolService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/schools")
