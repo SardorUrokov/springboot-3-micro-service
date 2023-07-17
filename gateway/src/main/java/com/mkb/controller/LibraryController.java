@@ -15,13 +15,45 @@ public class LibraryController {
     private final LibraryService libraryService;
 
     @GetMapping("/schools")
-    public ResponseEntity<?> getSchoolList(@RequestBody LibraryService.AuthRequestDTO requestDTO){
-        final var response = libraryService.getSchools(requestDTO);
-        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    public ResponseEntity<?> getSchoolList(@RequestParam(value = "fullName", required = false) String fullName,
+                                           @RequestParam(value = "email", required = false) String email,
+                                           @RequestParam(value = "username", required = false) String username,
+                                           @RequestParam(value = "password") String password
+    ) {
+
+        if (username == null) {
+            var response = libraryService
+                    .getSchoolsWithRegister(fullName, email, password);
+
+            return ResponseEntity
+                    .status(response.getHttpStatus())
+                    .body(response);
+        } else {
+            final var response = libraryService
+                    .getSchools(username, password);
+
+            return ResponseEntity
+                    .status(response.getHttpStatus())
+                    .body(response);
+        }
     }
 
     @GetMapping("/users")
-    public ResponseEntity<?> getUsers(@RequestParam("username") String username, @RequestParam("password") String password) {
-        return ResponseEntity.ok(libraryService.getUsersData(username, password));
+    public ResponseEntity<?> getUsers(@RequestParam(value = "fullName", required = false) String fullName,
+                                      @RequestParam(value = "email", required = false) String email,
+                                      @RequestParam(value = "username", required = false) String username,
+                                      @RequestParam(value = "password") String password
+    ) {
+        if (username == null)
+            return ResponseEntity
+                    .ok(libraryService
+                            .getUsersDataWithRegister(fullName, email, password)
+                    );
+
+        else
+            return ResponseEntity
+                    .ok(libraryService
+                            .getUsersData(username, password)
+                    );
     }
 }
