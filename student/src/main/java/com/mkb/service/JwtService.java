@@ -40,7 +40,6 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-
     public String generateToken(String userName) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userName);
@@ -69,6 +68,7 @@ public class JwtService {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+
     private Claims extractAllClaims(String token){
         return Jwts
                 .parserBuilder()

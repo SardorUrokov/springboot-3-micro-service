@@ -35,7 +35,7 @@ public class AuthController {
         final var authResponse = AuthResponseDTO.builder()
                 .username(user.getEmail())
                 .token(result)
-                .role("USER")
+                .role(user.getRoles().name())
                 .build();
 
         log.info("User is Saved! -> {}", authResponse);
@@ -57,7 +57,7 @@ public class AuthController {
             final var authResponse = AuthResponseDTO.builder()
                     .username(authRequest.username)
                     .token(generatedToken)
-                    .role("USER")
+                    .role("ADMIN")
                     .build();
 
             log.info("User is Authenticated! -> {}", authResponse);

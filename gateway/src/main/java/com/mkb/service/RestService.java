@@ -117,13 +117,12 @@ public class RestService {
                 );
 
         try {
-            ResponseEntity<AuthResponseDTO> response = restTemplate.exchange(
+            return restTemplate.exchange(
                     "http://localhost:8090/auth/authenticate",
                     HttpMethod.POST,
                     requestEntity,
                     AuthResponseDTO.class
             );
-            return response;
 
         } catch (HttpClientErrorException.Forbidden ex) {
             // Handle 403 Forbidden error
