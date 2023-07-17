@@ -49,15 +49,4 @@ public class SecurityConfig {
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return new RestAuthenticationEntryPoint();
     }
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        return http
-//                .csrf()
-//                .disable()
-//                .authorizeHttpRequests()
-//                .requestMatchers("/*/*/**")
-//                .permitAll()
-//                .and()
-//                .build();
-//    }
 }
