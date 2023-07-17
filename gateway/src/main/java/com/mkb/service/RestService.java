@@ -86,12 +86,12 @@ public class RestService {
 
         RestTemplate libServiceTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
-//        headers.set("Authorization", "Bearer " + token); //var-2
+//        headers.setBearerAuth(token);
+        headers.set("Authorization", "Bearer " + token); //var-2
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
 
         ResponseEntity<ApiResponse> response = libServiceTemplate.exchange(
-                "http://localhost:8070/api/v1/schools",
+                "http://localhost:8070/api/v1/schools/",
                 HttpMethod.GET,
                 requestEntity,
                 ApiResponse.class
@@ -124,6 +124,43 @@ public class RestService {
                     AuthResponseDTO.class
             );
             return response;
+
+        } catch (HttpClientErrorException.Forbidden ex) {
+            // Handle 403 Forbidden error
+            System.err.println("Access denied. Check your credentials or permissions.");
+            throw ex;
+        } catch (HttpClientErrorException ex) {
+            // Handle other client errors
+            System.err.println("Client error: " + ex.getRawStatusCode() + " - " + ex.getStatusText());
+            throw ex;
+        } catch (HttpServerErrorException ex) {
+            // Handle server errors
+            System.err.println("Server error: " + ex.getRawStatusCode() + " - " + ex.getStatusText());
+            throw ex;
+        } catch (RestClientException ex) {
+            // Handle other exceptions
+            System.err.println("Rest client exception: " + ex.getMessage());
+            throw ex;
+        }
+    }
+
+    public ApiResponse getUsersData(String token) {
+
+        RestTemplate libServiceTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+//        headers.setBearerAuth(token);
+        headers.set("Authorization", "Bearer " + token); //var-2
+        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<ApiResponse> response = libServiceTemplate.exchange(
+                    "http://localhost:8070/api/v1/schools/users",
+                    HttpMethod.GET,
+                    requestEntity,
+                    ApiResponse.class
+            );
+
+            return response.getBody();
 
         } catch (HttpClientErrorException.Forbidden ex) {
             // Handle 403 Forbidden error

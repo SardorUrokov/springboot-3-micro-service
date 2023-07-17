@@ -22,14 +22,26 @@ public class SchoolController {
     public void save(@RequestBody School school) {
 
         final var savedSchool = service.saveSchool(school);
-        log.info("School is saved! -> {}", savedSchool);
+        log.info("School is saved! -> {}", savedSchool.getPayload().getObject());
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<?> findAllSchools() {
 
         final var response = service.findAllSchools();
         log.info("School List! -> {}", response.getPayload().getObject());
+
+        return ResponseEntity
+                .status(response.getHttpStatus())
+                .body(response);
+    }
+
+
+    @GetMapping("/users")
+    public ResponseEntity<?> findUsers(){
+
+        final var response = service.getUsers();
+        log.info("Users List -> {}", response.getPayload().getObject());
 
         return ResponseEntity
                 .status(response.getHttpStatus())

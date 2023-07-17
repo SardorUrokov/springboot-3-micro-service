@@ -13,19 +13,24 @@ public class LibraryService {
     private final RestService restService;
     public record AuthRequestDTO(String username, String password) {}
 
-    public ApiResponse getData(AuthRequestDTO authRequestDTO) {
+    public ApiResponse getUsersData(String username, String password) {
+
+        final var response = restService.getToken(
+                username,
+                password
+        );
+
+        final var token = Objects.requireNonNull(response.getBody()).getToken();
+        return restService.getUsersData(token);
+    }
+
+    public ApiResponse getSchools(AuthRequestDTO authRequestDTO) {
         final var response = restService
                 .getToken(
                         authRequestDTO.username,
                         authRequestDTO.password
                 );
-
-        final var data = restService.getData(
-                Objects.requireNonNull(
-                                response.getBody()
-                        )
-                        .getToken()
-        );
-        return data;
+        final var token = Objects.requireNonNull(response.getBody()).getToken();
+        return restService.getData(token);
     }
 }
