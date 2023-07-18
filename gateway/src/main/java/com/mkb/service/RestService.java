@@ -2,11 +2,11 @@ package com.mkb.service;
 
 import java.util.Objects;
 
+import com.mkb.controller.LibraryController;
 import lombok.RequiredArgsConstructor;
 import com.mkb.entity.User;
 import com.mkb.dto.AuthResponseDTO;
 import com.mkb.response.ApiResponse;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -39,13 +39,12 @@ public class RestService {
         );
 
         final var token = Objects.requireNonNull(response.getBody()).getToken();
-        System.out.println("TOKEN -> " + token);
+//        System.out.println("TOKEN -> " + token);
         return response;
     }
 
     public static HttpEntity<?> getHttpEntity(String username, String password) {
-        record AuthDTO(String username, String password) {
-        }
+        record AuthDTO(String username, String password) {}
         final var authDTO = new AuthDTO(username, password);
 
         HttpHeaders headers = new HttpHeaders();
@@ -55,8 +54,7 @@ public class RestService {
     }
 
     public static HttpEntity<?> registerEntity(User user) {
-        record UserDTO(String fullName, String email, String password) {
-        }
+        record UserDTO(String fullName, String email, String password) {}
         final var registerDTO = new UserDTO(user.getFullName(), user.getEmail(), user.getPassword());
 
         HttpHeaders headers = new HttpHeaders();
@@ -71,6 +69,7 @@ public class RestService {
         HttpHeaders headers = new HttpHeaders();
 //        headers.setBearerAuth(token);  //var-1
         headers.set("Authorization", "Bearer " + token); //var-2
+
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
 
         ResponseEntity<ApiResponse> response = libServiceTemplate.exchange(
@@ -162,4 +161,28 @@ public class RestService {
             throw ex;
         }
     }
+
+    public ApiResponse saveSchool (String token, LibraryController.SchoolDTO schoolDTO) {
+
+        RestTemplate libServiceTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<LibraryController.SchoolDTO> requestEntity = new HttpEntity<>(schoolDTO, headers);
+
+        ResponseEntity<ApiResponse> response = libServiceTemplate.exchange(
+                "http://localhost:8070/api/v1/schools",
+                HttpMethod.POST,
+                requestEntity,
+                ApiResponse.class
+        );
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Error occurred during the request.");
+        }
+    }
+
 }

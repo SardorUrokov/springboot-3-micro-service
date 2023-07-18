@@ -16,6 +16,7 @@ public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
     String generatedToken;
 
     @OneToOne

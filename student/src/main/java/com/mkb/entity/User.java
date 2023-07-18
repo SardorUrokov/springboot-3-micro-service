@@ -26,11 +26,18 @@ public class User implements UserDetails {
     private String password;
 
     @Enumerated(value = EnumType.STRING)
-    private Roles roles = Roles.ADMIN;
+    private Roles roles = Roles.USER;
+
+    public User(String fullName, String email, String password, Roles roles) {
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(roles.name()));
+        return List.of(new SimpleGrantedAuthority(roles.getPermissions().toString()));
     }
 
     @Override

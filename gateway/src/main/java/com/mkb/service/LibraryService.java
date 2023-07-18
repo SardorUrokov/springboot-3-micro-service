@@ -1,8 +1,11 @@
 package com.mkb.service;
 
+import com.mkb.controller.LibraryController;
+import com.mkb.dto.AuthResponseDTO;
 import com.mkb.entity.User;
 import com.mkb.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -13,7 +16,24 @@ public class LibraryService {
 
     private final RestService restService;
 
-    public record AuthRequestDTO(String username, String password) {
+    public record AuthRequestDTO(String username, String password) {}
+
+    public ApiResponse saveSchoolWithRegister(LibraryController.SchoolDTO schoolDTO, User user) {
+
+        final var response = restService.register(user);
+        final var token = Objects.requireNonNull(response.getBody()).getToken();
+        return restService.saveSchool(token, schoolDTO);
+    }
+
+    public ApiResponse saveSchoolWithAuthenticate(LibraryController.SchoolDTO schoolDTO, AuthRequestDTO authRequestDTO) {
+
+        final var response = restService.getToken(
+                authRequestDTO.username,
+                authRequestDTO.password
+        );
+
+        final var token = Objects.requireNonNull(response.getBody()).getToken();
+        return restService.saveSchool(token, schoolDTO);
     }
 
     public ApiResponse getUsersData(String username, String password) {
@@ -58,6 +78,7 @@ public class LibraryService {
                 .email(email)
                 .password(password)
                 .build();
+
         final var response = restService.register(user);
 
         final var token = Objects.requireNonNull(response.getBody()).getToken();

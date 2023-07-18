@@ -8,24 +8,32 @@ import com.mkb.school.response.FullSchoolResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/schools")
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/schools")
+@PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
 public class SchoolController {
 
     private final SchoolService service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody School school) {
+    @PreAuthorize(value = "hasPermission('CREATE')")
+    public ResponseEntity<?> save(@RequestBody School school) {
 
         final var savedSchool = service.saveSchool(school);
         log.info("School is saved! -> {}", savedSchool.getPayload().getObject());
+
+        return ResponseEntity
+                .status(savedSchool.getHttpStatus())
+                .body(savedSchool.getPayload());
     }
 
     @GetMapping("/")
+    @PreAuthorize(value = "hasAuthority('READ')")
     public ResponseEntity<?> findAllSchools() {
 
         final var response = service.findAllSchools();
@@ -36,9 +44,10 @@ public class SchoolController {
                 .body(response);
     }
 
-
     @GetMapping("/users")
-    public ResponseEntity<?> findUsers(){
+//    @PreAuthorize("hasPermission('read:users')")
+    @PreAuthorize(value = "hasAnyAuthority('ADMIN', 'READ_USERS')")
+    public ResponseEntity<?> findUsers() {
 
         final var response = service.getUsers();
         log.info("Users List -> {}", response.getPayload().getObject());
@@ -49,6 +58,7 @@ public class SchoolController {
     }
 
     @GetMapping("/with-students/{school-id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<FullSchoolResponse> findAllSchools(
             @PathVariable("school-id") Integer schoolId) {
 

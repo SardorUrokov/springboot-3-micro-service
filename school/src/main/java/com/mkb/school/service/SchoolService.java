@@ -35,8 +35,7 @@ public class SchoolService {
 
     public ApiResponse findAllSchools() {
 
-        final var schoolList = repository
-                .findAll(Sort.by(Sort.Direction.DESC, "id"));
+        final var schoolList = repository.findAll();
 
         return ApiResponse.builder()
                 .httpStatus(HttpStatus.OK)
@@ -49,8 +48,7 @@ public class SchoolService {
 
     public ApiResponse getUsers() {
 
-        final var userList = userRepository
-                .findAll(Sort.by(Sort.Direction.DESC, "id"));
+        final var userList = userRepository.findAll();
 
         return ApiResponse.builder()
                 .httpStatus(HttpStatus.OK)

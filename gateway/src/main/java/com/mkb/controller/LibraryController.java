@@ -1,5 +1,6 @@
 package com.mkb.controller;
 
+import com.mkb.entity.User;
 import com.mkb.service.LibraryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,6 @@ public class LibraryController {
                                            @RequestParam(value = "username", required = false) String username,
                                            @RequestParam(value = "password") String password
     ) {
-
         if (username == null) {
             var response = libraryService
                     .getSchoolsWithRegister(fullName, email, password);
@@ -55,5 +55,38 @@ public class LibraryController {
                     .ok(libraryService
                             .getUsersData(username, password)
                     );
+    }
+
+    public record SchoolDTO(String email, String name) {
+    }
+
+    @PostMapping("/saveSchool")
+    public ResponseEntity<?> saveSchool(@RequestBody SchoolDTO schoolDTO,
+                                        @RequestParam(value = "fullName", required = false) String fullName,
+                                        @RequestParam(value = "email", required = false) String email,
+                                        @RequestParam(value = "username", required = false) String username,
+                                        @RequestParam(value = "password") String password
+    ) {
+
+        if (username == null) {
+
+            User user = User.builder()
+                    .fullName(fullName)
+                    .email(email)
+                    .password(password)
+                    .build();
+
+            return ResponseEntity
+                    .ok(libraryService.saveSchoolWithRegister(schoolDTO, user));
+
+        } else {
+
+            LibraryService.AuthRequestDTO authRequestDTO = new LibraryService.AuthRequestDTO(username, password);
+
+            return ResponseEntity
+                    .ok(libraryService
+                            .saveSchoolWithAuthenticate(schoolDTO, authRequestDTO)
+                    );
+        }
     }
 }
