@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import com.mkb.entity.User;
 import com.mkb.dto.AuthResponseDTO;
 import com.mkb.response.ApiResponse;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -42,24 +43,6 @@ public class RestService {
         return response;
     }
 
-//    public ResponseEntity<AuthResponseDTO> getToken(String username, String password) {
-//
-//        RestTemplate restTemplate = new RestTemplate();
-//
-//        final var response = restTemplate.exchange(
-//                "http://localhost:8090/auth/authenticate",
-//                HttpMethod.POST,
-//                getHttpEntity(username, password),
-//                AuthResponseDTO.class
-//        );
-//
-//        final var token = Objects.requireNonNull(response.getBody()).getToken();
-//        System.out.println("TOKEN -> " + token);
-//
-//        return response;
-//    }
-
-
     public static HttpEntity<?> getHttpEntity(String username, String password) {
         record AuthDTO(String username, String password) {
         }
@@ -86,7 +69,7 @@ public class RestService {
 
         RestTemplate libServiceTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-//        headers.setBearerAuth(token);
+//        headers.setBearerAuth(token);  //var-1
         headers.set("Authorization", "Bearer " + token); //var-2
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
 

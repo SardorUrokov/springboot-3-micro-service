@@ -19,20 +19,25 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register (@RequestBody User user){
-        final var response = restService.register(user);
-        return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
+        final var response = restService
+                .register(user);
+
+        return ResponseEntity
+                .status(response.getStatusCode())
+                .body(response.getBody());
     }
 
     @GetMapping("/authenticate")
     public ResponseEntity<?> authenticate(@RequestBody AuthRequest authRequest){
 
-        final var response = restService.getToken(authRequest.username, authRequest.password);
-//        final var responseDTO = AuthResponseDTO.builder()
-//                .username(authRequest.username)
-//                .token(token)
-//                .role("USER")
-//                .build();
+        final var response = restService
+                .getToken(
+                        authRequest.username,
+                        authRequest.password
+                );
 
-        return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
+        return ResponseEntity
+                .status(response.getStatusCode())
+                .body(response.getBody());
     }
 }
