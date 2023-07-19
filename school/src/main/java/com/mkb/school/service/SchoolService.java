@@ -1,5 +1,6 @@
 package com.mkb.school.service;
 
+import com.mkb.school.controller.SchoolController;
 import com.mkb.school.entity.School;
 import com.mkb.school.response.ApiResponse;
 import com.mkb.school.response.ResponseObject;
@@ -20,14 +21,18 @@ public class SchoolService {
     private final SchoolRepository repository;
     private final UserRepository userRepository;
 
-    public ApiResponse saveSchool(School school) {
+    public ApiResponse saveSchool(SchoolController.SchoolDTO schoolDTO) {
 
-        final var saved = repository.save(school);
+        School newSchool = School.builder()
+                .email(schoolDTO.email())
+                .name(schoolDTO.name())
+                .build();
+        final var saved = repository.save(newSchool);
 
         return ApiResponse.builder()
                 .httpStatus(HttpStatus.CREATED)
                 .payload(ResponseObject.builder()
-                        .message("Schools saved!")
+                        .message("School is saved!")
                         .object(saved)
                         .build())
                 .build();

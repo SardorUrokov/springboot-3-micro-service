@@ -1,4 +1,4 @@
-package com.mkb.school.entity.enums;
+package com.mkb.entity.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -48,21 +48,19 @@ public class LibraryController {
                                       @RequestParam(value = "username", required = false) String username,
                                       @RequestParam(value = "password") String password
     ) {
+        ApiResponse response;
         if (username == null) {
-            final var response = libraryService
+            response = libraryService
                     .getUsersDataWithRegister(fullName, email, password);
 
-            return ResponseEntity
-                    .status(response.getHttpStatus())
-                    .body(response.getPayload());
         } else {
-            final var response = libraryService
+            response = libraryService
                     .getUsersData(username, password);
 
-            return ResponseEntity
-                    .status(response.getHttpStatus())
-                    .body(response.getPayload());
         }
+        return ResponseEntity
+                .status(response.getHttpStatus())
+                .body(response.getPayload());
     }
 
     @PostMapping("/saveSchool")

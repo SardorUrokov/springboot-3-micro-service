@@ -14,7 +14,7 @@ public enum Roles {
 
     USER(
             Set.of(
-                    READ_ONLY
+                    READ
             )
     ),
 

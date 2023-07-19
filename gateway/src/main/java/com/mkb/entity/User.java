@@ -1,9 +1,7 @@
 package com.mkb.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.mkb.entity.enums.Roles;
+import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,8 +17,11 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     private String fullName;
     private String email;
     private String password;
+
+    @Enumerated(value = EnumType.STRING)
+    private Roles roles;
 }

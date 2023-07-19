@@ -18,12 +18,14 @@ public class SchoolController {
 
     private final SchoolService service;
 
+    public record SchoolDTO(String email, String name){}
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize(value = "hasAuthority('admin:create')")
-    public ResponseEntity<?> save(@RequestBody School school) {
+    public ResponseEntity<?> save(@RequestBody SchoolDTO schoolDTO) {
 
-        final var savedSchool = service.saveSchool(school);
+        final var savedSchool = service.saveSchool(schoolDTO);
         log.info("School is saved! -> {}", savedSchool.getPayload().getObject());
 
         return ResponseEntity
@@ -32,7 +34,7 @@ public class SchoolController {
     }
 
     @GetMapping("/")
-    @PreAuthorize(value = "hasAnyAuthority('admin:read', 'user:read')")
+    @PreAuthorize(value = "hasAnyAuthority('read')")
     public ResponseEntity<?> findAllSchools() {
 
         final var response = service.findAllSchools();
