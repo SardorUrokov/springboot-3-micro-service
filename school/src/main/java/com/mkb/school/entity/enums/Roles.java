@@ -21,8 +21,8 @@ public enum Roles {
 
     ADMIN(
             Set.of(
-                    READ,
                     CREATE,
+                    READ,
                     UPDATE,
                     DELETE,
                     USERS_READ
@@ -40,4 +40,5 @@ public enum Roles {
         authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
         return authorities;
     }
+
 }

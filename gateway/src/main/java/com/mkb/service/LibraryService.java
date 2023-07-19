@@ -1,18 +1,19 @@
 package com.mkb.service;
 
-import com.mkb.controller.LibraryController;
 import com.mkb.entity.User;
-import com.mkb.entity.enums.Permission;
-import com.mkb.repository.UserRepository;
 import com.mkb.response.ApiResponse;
+import com.mkb.entity.enums.Permission;
 import com.mkb.response.ResponseObject;
-import jakarta.ws.rs.NotFoundException;
-import lombok.RequiredArgsConstructor;
+import com.mkb.repository.UserRepository;
+import com.mkb.controller.LibraryController;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.Set;
+
+import lombok.RequiredArgsConstructor;
+import jakarta.ws.rs.NotFoundException;
 
 import static com.mkb.entity.enums.Permission.*;
 
@@ -28,17 +29,25 @@ public class LibraryService {
 
     public ApiResponse saveSchoolWithRegister(LibraryController.SchoolDTO schoolDTO, User user) {
 
-        final var response = restService.register(user);
-        final var userEmail = Objects.requireNonNull(response.getBody()).getUsername();
+        final var userEmail = Objects.requireNonNull(user.getEmail());
+        final var exists = existUser(userEmail);
 
-        if (isAccessibleUser(userEmail, CREATE)) {
-            final var token = Objects.requireNonNull(response.getBody()).getToken();
-            return restService.saveSchool(token, schoolDTO);
+        if (!exists) {
+            final var response = restService.register(user);
 
+            if (isAccessibleUser(userEmail, CREATE)) {
+                final var token = Objects.requireNonNull(response.getBody()).getToken();
+                return restService.saveSchool(token, schoolDTO);
+
+            } else
+                return new ApiResponse(
+                        HttpStatus.FORBIDDEN,
+                        new ResponseObject("Forbidden", "Method not allowed"));
         } else
             return new ApiResponse(
-                    HttpStatus.FORBIDDEN,
-                    new ResponseObject("Forbidden", "Method not allowed"));
+                    HttpStatus.CONFLICT,
+                    new ResponseObject("This user has already Registered!", null));
+
     }
 
     public ApiResponse saveSchoolWithAuthenticate(LibraryController.SchoolDTO schoolDTO, AuthRequestDTO authRequestDTO) {
@@ -66,7 +75,6 @@ public class LibraryService {
                 password
         );
 
-
         if (Objects.requireNonNull(response.getBody()).getRole().equals("ADMIN")) {
             final var token = Objects.requireNonNull(response.getBody()).getToken();
             return restService.getUsersData(token);
@@ -79,26 +87,33 @@ public class LibraryService {
 
     public ApiResponse getUsersDataWithRegister(String fullName, String email, String password) {
 
-        User user = User.builder()
-                .fullName(fullName)
-                .email(email)
-                .password(password)
-                .build();
-        final var response = restService.register(user);
+        final var exists = existUser(email);
+        if (!exists) {
 
-        final var userEmail = Objects.requireNonNull(response.getBody()).getUsername();
+            User user = User.builder()
+                    .fullName(fullName)
+                    .email(email)
+                    .password(password)
+                    .build();
 
-        if (isAccessibleUser(userEmail, USERS_READ)) {
-            final var token = Objects.requireNonNull(response.getBody()).getToken();
-            return restService.getUsersData(token);
+            final var response = restService.register(user);
 
+            if (isAccessibleUser(email, USERS_READ)) {
+                final var token = Objects.requireNonNull(response.getBody()).getToken();
+                return restService.getUsersData(token);
+
+            } else
+                return new ApiResponse(
+                        HttpStatus.FORBIDDEN,
+                        new ResponseObject("Forbidden", "Method not allowed"));
         } else
             return new ApiResponse(
-                    HttpStatus.FORBIDDEN,
-                    new ResponseObject("Forbidden", "Method not allowed"));
+                    HttpStatus.CONFLICT,
+                    new ResponseObject("This user has already Registered!", null));
     }
 
     public ApiResponse getSchools(String username, String password) {
+
         final var response = restService
                 .getToken(
                         username,
@@ -106,29 +121,6 @@ public class LibraryService {
                 );
 
         if (isAccessibleUser(username, READ)) {
-
-            final var token = Objects.requireNonNull(response.getBody()).getToken();
-            return restService.getData(token);
-
-        } else
-            return new ApiResponse(
-                HttpStatus.FORBIDDEN,
-                new ResponseObject("Forbidden", "Method not allowed"));
-    }
-
-    public ApiResponse getSchoolsWithRegister(String fullName, String email, String password) {
-
-        User user = User.builder()
-                .fullName(fullName)
-                .email(email)
-                .password(password)
-                .build();
-
-        final var response = restService.register(user);
-        final var userEmail = Objects.requireNonNull(response.getBody()).getUsername();
-
-        if (isAccessibleUser(userEmail, READ)) {
-
             final var token = Objects.requireNonNull(response.getBody()).getToken();
             return restService.getData(token);
 
@@ -138,13 +130,43 @@ public class LibraryService {
                     new ResponseObject("Forbidden", "Method not allowed"));
     }
 
+    public ApiResponse getSchoolsWithRegister(String fullName, String email, String password) {
+
+        final var exists = existUser(email);
+        if (!exists) {
+
+            User user = User.builder()
+                    .fullName(fullName)
+                    .email(email)
+                    .password(password)
+                    .build();
+
+            final var response = restService.register(user);
+            final var userEmail = Objects.requireNonNull(response.getBody()).getUsername();
+
+            if (isAccessibleUser(userEmail, READ)) {
+                final var token = Objects.requireNonNull(response.getBody()).getToken();
+                return restService.getData(token);
+
+            } else
+                return new ApiResponse(
+                        HttpStatus.FORBIDDEN,
+                        new ResponseObject("Forbidden", "Method not allowed"));
+        } else
+            return new ApiResponse(
+                    HttpStatus.CONFLICT,
+                    new ResponseObject("This user has already Registered!", null));
+    }
+
     public boolean isAccessibleUser(String email, Permission permission) {
 
-        boolean isAccess = false;
-        User user = userRepository.findByEmail(email).orElseThrow(NotFoundException::new);
-        final var permissions = user.getRoles().getPermissions();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(
+                        NotFoundException::new
+                );
 
-        System.out.println("Permissions -> " + permissions);
+        boolean isAccess = false;
+        final var permissions = user.getRoles().getPermissions();
 
         for (Permission permission1 : permissions) {
             if (permission1.equals(permission)) {
@@ -152,6 +174,11 @@ public class LibraryService {
                 break;
             }
         }
+
         return isAccess;
+    }
+
+    public boolean existUser(String username) {
+        return userRepository.existsByEmail(username);
     }
 }
