@@ -12,6 +12,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.mkb.school.entity.enums.Roles.*;
+import static org.springframework.http.HttpMethod.*;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -27,10 +30,11 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/*/*/**")
-//                .permitAll()
-//                .hasAnyAuthority("ADMIN")
-//                .anyRequest()
+//                .requestMatchers("/*/*/**")
+                .requestMatchers(POST, "/api/v1/schools").hasAuthority(ADMIN.name())
+                .requestMatchers(GET, "/api/v1/schools/").hasAnyAuthority(ADMIN.getAuthorities().toString(), USER.getAuthorities().toString())
+                .requestMatchers(POST, "/api/v1/schools/users").hasAuthority(ADMIN.getAuthorities().toString())
+                .anyRequest()
                 .authenticated()
                 .and()
                 .sessionManagement()

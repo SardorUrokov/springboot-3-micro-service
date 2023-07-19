@@ -3,3 +3,6 @@ spring:
     name: schools
   config:
     import: optional:configserver:http://localhost:8888/
+logging:
+  level:
+    root: info

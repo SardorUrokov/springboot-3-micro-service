@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,7 +25,7 @@ public enum Roles {
                     CREATE,
                     UPDATE,
                     DELETE,
-                    READ_USERS
+                    USERS_READ
             )
     );
 
@@ -37,11 +35,8 @@ public enum Roles {
     public Set<SimpleGrantedAuthority> getAuthorities() {
         var authorities = getPermissions()
                 .stream()
-                .map(permission ->
-                        new SimpleGrantedAuthority(permission.getPermission()
-                        ))
+                .map(permission -> new SimpleGrantedAuthority(permission.getPermission()))
                 .collect(Collectors.toSet());
-
         authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
         return authorities;
     }

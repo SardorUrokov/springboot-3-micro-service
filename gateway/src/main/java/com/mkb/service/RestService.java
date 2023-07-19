@@ -184,5 +184,4 @@ public class RestService {
             throw new RuntimeException("Error occurred during the request.");
         }
     }
-
 }

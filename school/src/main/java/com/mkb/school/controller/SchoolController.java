@@ -14,14 +14,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/schools")
-@PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
 public class SchoolController {
 
     private final SchoolService service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize(value = "hasPermission('CREATE')")
+    @PreAuthorize(value = "hasAuthority('admin:create')")
     public ResponseEntity<?> save(@RequestBody School school) {
 
         final var savedSchool = service.saveSchool(school);
@@ -33,7 +32,7 @@ public class SchoolController {
     }
 
     @GetMapping("/")
-    @PreAuthorize(value = "hasAuthority('READ')")
+    @PreAuthorize(value = "hasAnyAuthority('admin:read', 'user:read')")
     public ResponseEntity<?> findAllSchools() {
 
         final var response = service.findAllSchools();
@@ -45,8 +44,7 @@ public class SchoolController {
     }
 
     @GetMapping("/users")
-//    @PreAuthorize("hasPermission('read:users')")
-    @PreAuthorize(value = "hasAnyAuthority('ADMIN', 'READ_USERS')")
+    @PreAuthorize(value = "hasAnyAuthority('users:read')")
     public ResponseEntity<?> findUsers() {
 
         final var response = service.getUsers();

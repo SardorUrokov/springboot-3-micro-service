@@ -21,7 +21,7 @@ public enum Roles {
     ADMIN(
             Set.of(
                     READ,
-                    READ_USERS,
+                    USERS_READ,
                     CREATE,
                     UPDATE,
                     DELETE
@@ -34,11 +34,8 @@ public enum Roles {
     public Set<SimpleGrantedAuthority> getAuthorities() {
         var authorities = getPermissions()
                 .stream()
-                .map(permission ->
-                        new SimpleGrantedAuthority(permission.getPermission()
-                        ))
+                .map(permission -> new SimpleGrantedAuthority(permission.getPermission()))
                 .collect(Collectors.toSet());
-
         authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
         return authorities;
     }

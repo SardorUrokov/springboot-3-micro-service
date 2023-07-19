@@ -31,6 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
+
 //        if (request.getServletPath().contains("/api/v1/schools/")) {
 //            filterChain.doFilter(request, response);
 //            return;
@@ -38,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
         String jwt, userEmail;
-        System.out.println("AuthHeader -> " + authHeader);
+        System.out.println("\nAuthHeader -> " + authHeader);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -66,15 +67,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 authToken
                         .setDetails(
-                                new WebAuthenticationDetailsSource()
-                                        .buildDetails(request)
+                                new WebAuthenticationDetailsSource().buildDetails(request)
                         );
 
                 SecurityContextHolder
                         .getContext()
                         .setAuthentication(authToken);
 
-                System.out.println("\nSecurityContextHolder: " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+                System.out.println("\nSecurityContextHolder -> Authorities: " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
             }
         }
         filterChain.doFilter(request, response);

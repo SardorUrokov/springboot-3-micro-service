@@ -3,7 +3,9 @@ spring:
     name: students
   config:
     import: optional:configserver:http://localhost:8888/
-
+logging:
+  level:
+    root: info
 #eureka:
 #  client:
 #    register-with-eureka: true
