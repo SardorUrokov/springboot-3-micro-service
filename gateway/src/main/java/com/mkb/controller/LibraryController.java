@@ -1,19 +1,23 @@
 package com.mkb.controller;
 
 import com.mkb.entity.User;
+import com.mkb.response.ApiResponse;
 import com.mkb.service.LibraryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
-@RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/library")
+@RequiredArgsConstructor
+@RestController
+@Slf4j
 public class LibraryController {
 
     private final LibraryService libraryService;
+
+    public record SchoolDTO(String email, String name) {
+    }
 
     @GetMapping("/schools")
     public ResponseEntity<?> getSchoolList(@RequestParam(value = "fullName", required = false) String fullName,
@@ -44,20 +48,21 @@ public class LibraryController {
                                       @RequestParam(value = "username", required = false) String username,
                                       @RequestParam(value = "password") String password
     ) {
-        if (username == null)
-            return ResponseEntity
-                    .ok(libraryService
-                            .getUsersDataWithRegister(fullName, email, password)
-                    );
+        if (username == null) {
+            final var response = libraryService
+                    .getUsersDataWithRegister(fullName, email, password);
 
-        else
             return ResponseEntity
-                    .ok(libraryService
-                            .getUsersData(username, password)
-                    );
-    }
+                    .status(response.getHttpStatus())
+                    .body(response.getPayload());
+        } else {
+            final var response = libraryService
+                    .getUsersData(username, password);
 
-    public record SchoolDTO(String email, String name) {
+            return ResponseEntity
+                    .status(response.getHttpStatus())
+                    .body(response.getPayload());
+        }
     }
 
     @PostMapping("/saveSchool")
@@ -76,17 +81,19 @@ public class LibraryController {
                     .password(password)
                     .build();
 
+            final var response = libraryService.saveSchoolWithRegister(schoolDTO, user);
             return ResponseEntity
-                    .ok(libraryService.saveSchoolWithRegister(schoolDTO, user));
+                    .status(response.getHttpStatus())
+                    .body(response.getPayload());
 
         } else {
 
             LibraryService.AuthRequestDTO authRequestDTO = new LibraryService.AuthRequestDTO(username, password);
 
+            final var response = libraryService.saveSchoolWithAuthenticate(schoolDTO, authRequestDTO);
             return ResponseEntity
-                    .ok(libraryService
-                            .saveSchoolWithAuthenticate(schoolDTO, authRequestDTO)
-                    );
+                    .status(response.getHttpStatus())
+                    .body(response.getPayload());
         }
     }
 }

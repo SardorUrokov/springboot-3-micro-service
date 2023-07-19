@@ -1,11 +1,11 @@
 package com.mkb.service;
 
 import com.mkb.controller.LibraryController;
-import com.mkb.dto.AuthResponseDTO;
 import com.mkb.entity.User;
 import com.mkb.response.ApiResponse;
+import com.mkb.response.ResponseObject;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -16,13 +16,21 @@ public class LibraryService {
 
     private final RestService restService;
 
-    public record AuthRequestDTO(String username, String password) {}
+    public record AuthRequestDTO(String username, String password) {
+    }
 
     public ApiResponse saveSchoolWithRegister(LibraryController.SchoolDTO schoolDTO, User user) {
 
         final var response = restService.register(user);
-        final var token = Objects.requireNonNull(response.getBody()).getToken();
-        return restService.saveSchool(token, schoolDTO);
+
+        if (Objects.requireNonNull(response.getBody()).getRole().equals("ADMIN")) {
+            final var token = Objects.requireNonNull(response.getBody()).getToken();
+            return restService.saveSchool(token, schoolDTO);
+
+        } else
+            return new ApiResponse(
+                    HttpStatus.FORBIDDEN,
+                    new ResponseObject("Forbidden", "Method not allowed"));
     }
 
     public ApiResponse saveSchoolWithAuthenticate(LibraryController.SchoolDTO schoolDTO, AuthRequestDTO authRequestDTO) {
@@ -32,8 +40,13 @@ public class LibraryService {
                 authRequestDTO.password
         );
 
-        final var token = Objects.requireNonNull(response.getBody()).getToken();
-        return restService.saveSchool(token, schoolDTO);
+        if (Objects.requireNonNull(response.getBody()).getRole().equals("ADMIN")) {
+            final var token = Objects.requireNonNull(response.getBody()).getToken();
+            return restService.saveSchool(token, schoolDTO);
+        } else
+            return new ApiResponse(
+                    HttpStatus.FORBIDDEN,
+                    new ResponseObject("Forbidden", "Method not allowed"));
     }
 
     public ApiResponse getUsersData(String username, String password) {
@@ -43,8 +56,14 @@ public class LibraryService {
                 password
         );
 
-        final var token = Objects.requireNonNull(response.getBody()).getToken();
-        return restService.getUsersData(token);
+        if (Objects.requireNonNull(response.getBody()).getRole().equals("ADMIN")) {
+            final var token = Objects.requireNonNull(response.getBody()).getToken();
+            return restService.getUsersData(token);
+
+        } else
+            return new ApiResponse(
+                    HttpStatus.FORBIDDEN,
+                    new ResponseObject("Forbidden", "Method not allowed"));
     }
 
     public ApiResponse getUsersDataWithRegister(String fullName, String email, String password) {
@@ -56,8 +75,14 @@ public class LibraryService {
                 .build();
         final var response = restService.register(user);
 
-        final var token = Objects.requireNonNull(response.getBody()).getToken();
-        return restService.getUsersData(token);
+        if (Objects.requireNonNull(response.getBody()).getRole().equals("ADMIN")) {
+            final var token = Objects.requireNonNull(response.getBody()).getToken();
+            return restService.getUsersData(token);
+
+        } else
+            return new ApiResponse(
+                    HttpStatus.FORBIDDEN,
+                    new ResponseObject("Forbidden", "Method not allowed"));
     }
 
     public ApiResponse getSchools(String username, String password) {
